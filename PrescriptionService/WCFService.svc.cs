@@ -34,7 +34,7 @@ namespace PrescriptionService
 
         public XElement FilterByInterchangeNodeValue(string node, string value)
         {
-            return new XElement("root", GetTestData().Descendants(node).Where(i => (string)i == value));
+            return new XElement("root", GetTestData().Descendants("Interchange").Where(n => (string)n.Descendants(node).FirstOrDefault() == value));
         }
 
         public XElement GetAllInterchanges()
