@@ -13,7 +13,6 @@ namespace PrescriptionService
     [ServiceContract]
     public interface IWCFService
     {
-
         [OperationContract]
         XElement GetTestData();
 

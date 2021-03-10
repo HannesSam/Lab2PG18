@@ -1,11 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Runtime.Serialization;
-using System.ServiceModel;
-using System.ServiceModel.Web;
 using System.Text;
 using System.Xml.Linq;
 
@@ -15,26 +11,33 @@ namespace PrescriptionService
     // NOTE: In order to launch WCF Test Client for testing this service, please select Service1.svc or Service1.svc.cs at the Solution Explorer and start debugging.
     public class WCFService : IWCFService
     {
-        static XElement _testData;
-        static XElement _interchanges;
+        public static XElement _testData;
+        public static XElement _interchanges;
+
+        public WCFService()
+        {
+           GetTestData();
+           GetAllInterchanges();
+        }
+
         public XElement FilterByInterchangeID(int id)
         {
-            return GetTestData().Descendants("Interchange").Where(i => (int)i.Element("MessageRoutingAddress").Element("InterchangeRef") == id).FirstOrDefault();
+            return _testData.Descendants("Interchange").Where(i => (int)i.Element("MessageRoutingAddress").Element("InterchangeRef") == id).FirstOrDefault();
         }
 
         public XElement FilterByInterchangeNode(string node)
         {
-            return new XElement("root", GetTestData().Descendants(node));
+            return new XElement("root", _testData.Descendants(node));
         }
 
         public XElement FilterByInterchangeIDAndNode(int id, string node)
         {
-            return new XElement("root", GetTestData().Descendants("Interchange").Where(i => (int)i.Element("MessageRoutingAddress").Element("InterchangeRef") == id).FirstOrDefault().Descendants(node));
+            return new XElement("root", _testData.Descendants("Interchange").Where(i => (int)i.Element("MessageRoutingAddress").Element("InterchangeRef") == id).FirstOrDefault().Descendants(node));
         }
 
         public XElement FilterByInterchangeNodeValue(string node, string value)
         {
-            return new XElement("root", GetTestData().Descendants("Interchange").Where(n => (string)n.Descendants(node).FirstOrDefault() == value));
+            return new XElement("root", _testData.Descendants("Interchange").Where(n => (string)n.Descendants(node).FirstOrDefault() == value));
         }
 
         public XElement GetAllInterchanges()
