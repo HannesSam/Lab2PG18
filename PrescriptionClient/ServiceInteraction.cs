@@ -8,15 +8,21 @@ using System.Xml.Linq;
 
 namespace PrescriptionClient
 {
+    /// <summary>
+    /// 
+    /// </summary>
     class ServiceInteraction
     {
-        IWCFService ic;
+        readonly IWCFService ic;
         private XElement _result;
         public ServiceInteraction()
         {
            ic = new WCFServiceClient();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public XElement Result
         {
             get { return _result; }
@@ -40,20 +46,20 @@ namespace PrescriptionClient
 
         public void GetFilteredByID(int id)
         {
-            ic.FilterByInterchangeID(id);
+            Result = ic.FilterByInterchangeID(id);
         }
 
         public void GetFilteredByNode(string node)
         {
-            ic.FilterByInterchangeNode(node);
+            Result = ic.FilterByInterchangeNode(node);
         }
         public void GetFilteredByIDAndNode(int id, string node)
         {
-            ic.FilterByInterchangeIDAndNode(id, node);
+            Result = ic.FilterByInterchangeIDAndNode(id, node);
         }
         public void GetFilteredByNodeValue(string node, string nodeValue)
         {
-            ic.FilterByInterchangeNodeValue(node, nodeValue);
+            Result = ic.FilterByInterchangeNodeValue(node, nodeValue);
         }
 
     }

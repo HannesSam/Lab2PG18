@@ -22,7 +22,7 @@ namespace PrescriptionService
 
         public XElement FilterByInterchangeID(int id)
         {
-            return _testData.Descendants("Interchange").Where(i => (int)i.Element("MessageRoutingAddress").Element("InterchangeRef") == id).FirstOrDefault();
+            return new XElement("root", _testData.Descendants("Interchange").Where(i => (int)i.Element("MessageRoutingAddress").Element("InterchangeRef") == id).FirstOrDefault());
         }
 
         public XElement FilterByInterchangeNode(string node)
