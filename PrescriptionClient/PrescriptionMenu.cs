@@ -8,13 +8,21 @@ using System.Xml.Linq;
 namespace PrescriptionClient
 {
     /// <summary>
-    /// 
+    /// The prescriptionmenu which the user will interact with from the Console.
     /// </summary>
     class PrescriptionMenu
     {
+        /// <summary>
+        /// The ServiceInteraction which will be used to interact with the service when user prompts a menuoption.
+        /// </summary>
         readonly ServiceInteraction serviceInteraction;
+        /// <summary>
+        /// Bool which tells us whether the user wants to exit the program.
+        /// </summary>
         bool runProgram;
-
+        /// <summary>
+        /// Constructor which creates the ServiceInteraction for this instance of the PrecsriptionMenu and sets the bool to true.
+        /// </summary>
         public PrescriptionMenu()
         {
             serviceInteraction = new ServiceInteraction();
@@ -22,7 +30,7 @@ namespace PrescriptionClient
         }
 
         /// <summary>
-        /// 
+        /// Method which is used to start the UI for the menu. 
         /// </summary>
         public void StartUI()
         {
@@ -37,7 +45,7 @@ namespace PrescriptionClient
         }
 
         /// <summary>
-        /// 
+        /// A method which prints the menu with options and catches invalid user input. 
         /// </summary>
         private void RunMenu()
         {
@@ -52,6 +60,7 @@ namespace PrescriptionClient
                 Console.WriteLine("Invalid input! Press enter to get back to the menu...");
                 Console.ReadLine();
             }
+            Console.Clear();
 
             PrintXML(serviceInteraction.Result);
             if (printPrettyXML)
@@ -66,10 +75,15 @@ namespace PrescriptionClient
                     Console.ReadLine();
                 }
             }
+            else
+            {
+                Console.WriteLine("\nPress enter to continue..");
+                Console.ReadLine();
+            }
         }
 
         /// <summary>
-        /// 
+        /// This method prints ut the menu.
         /// </summary>
         private void PrintMenu()
         {
@@ -88,9 +102,9 @@ namespace PrescriptionClient
         }
 
         /// <summary>
-        /// 
+        /// This method handles the menu input and the switch statment picks the choosen option and performs the action. 
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A bool that is true if the user should get the option to pretty print the XML</returns>
         private bool HandleMenuInput()
         {
             int input = Int32.Parse(Console.ReadLine());
@@ -141,15 +155,16 @@ namespace PrescriptionClient
                     runProgram = false;
                     break;
                 default:
+                    runProgram = false;
                     break;
             }
             return optionToPrintPrettyXML;
         }
 
         /// <summary>
-        /// 
+        /// This method checks if the xml is null and if not prints it to the console.
         /// </summary>
-        /// <param name="xml"></param>
+        /// <param name="xml">XML for print</param>
         private void PrintXML(XElement xml)
         {
             if (xml != null)
@@ -164,32 +179,35 @@ namespace PrescriptionClient
         }
 
         /// <summary>
-        /// 
+        /// This method prints selected parts of the incoming xml to the console in a more structured way.
         /// </summary>
-        /// <param name="xml"></param>
+        /// <param name="xml">XML for pretty print</param>
         private void PrintPrettyXML(XElement xml)
         {
             foreach (XElement interchange in xml.Elements("Interchange"))
             {
                 string patientName = interchange.Elements("NewPrescriptionMessage").Elements("SubjectOfCare").Elements("PatientMatchingInfo").Elements("PersonNameDetails").Elements("StructuredPersonName").Select(s => (string)s.Element("FirstGivenName") + " " + (string)s.Element("FamilyName")).FirstOrDefault();
                 string physicianName = interchange.Elements("NewPrescriptionMessage").Elements("PrescriptionMessage").Elements("Prescriber").Elements("HealthcareAgent").Elements("HealthcareParty").Elements("HealthcarePerson").Select(s => (string)s.Element("Name")).FirstOrDefault();
-                List<string> medicineIDs = interchange.Elements("NewPrescriptionMessage").Elements("PrescriptionSet").Elements("PrescriptionItemDetails").Elements("PrescribedMedicinalProduct").Elements("MedicinalProduct").Select(s => (string)s.Element("ProductType")).ToList();
-                List<string> dosages = interchange.Elements("NewPrescriptionMessage").Elements("PrescriptionSet").Elements("PrescriptionItemDetails").Elements("PrescribedMedicinalProduct").Elements("InstructionsForUse").Elements("UnstructuredInstructionsForUse").Select(s => (string)s.Element("UnstructuredDosageAdmin")).ToList();
+                List<string> medicineIDs = interchange.Elements("NewPrescriptionMessage").Elements("PrescriptionSet").Elements("PrescriptionItemDetails").Elements("PrescribedMedicinalProduct").Elements("MedicinalProduct").Elements("ManufacturedProductId").Select(s => (string)s.Element("ProductId")).ToList();
 
+                Console.WriteLine("Patient: " + patientName + "\n" + "Physician: " + physicianName);
                 string medicineID = "";
+                string dosage = "";
                 foreach (var medicine in medicineIDs)
                 {
+                    List<string> dosages = new List<string>();
                     medicineID += "Medicine: " + medicine + "\n";
+                    dosages.AddRange(interchange.Elements("NewPrescriptionMessage").Elements("PrescriptionSet").Elements("PrescriptionItemDetails").Elements("PrescribedMedicinalProduct").Where(s => (string)s.Element("MedicinalProduct").Element("ManufacturedProductId").Element("ProductId") == medicine).Elements("InstructionsForUse").Elements("UnstructuredInstructionsForUse").Select(s => (string)s.Element("UnstructuredDosageAdmin")));
+                    dosage = "";
+                    foreach (var dose in dosages)
+                    {
+                        dosage += "Dosage: " + dose + "\n";
+                    }
+                    Console.Write(medicineID + dosage);
                 }
-                string dosage = "";
-                foreach (var dose in dosages)
-                {
-                    dosage += "Dosage: " + dose + "\n";
-                }
-
-                Console.WriteLine("Patient: " + patientName + "\n" + "Physician: " + physicianName + "\n" + medicineID + dosage);
-
             }
+
+            Console.WriteLine();
         }
     }
 }

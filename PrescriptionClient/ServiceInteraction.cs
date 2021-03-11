@@ -9,7 +9,7 @@ using System.Xml.Linq;
 namespace PrescriptionClient
 {
     /// <summary>
-    /// 
+    /// This class acts as the middleman between the Prescription client and prescription service. Exposing all the relevant methods from the service to the UI classes. 
     /// </summary>
     class ServiceInteraction
     {
@@ -21,7 +21,7 @@ namespace PrescriptionClient
         }
 
         /// <summary>
-        /// 
+        /// The set method here sets the result and attaches the fetched time as an attribute to the root node. 
         /// </summary>
         public XElement Result
         {

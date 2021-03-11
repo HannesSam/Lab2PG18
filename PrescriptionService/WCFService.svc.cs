@@ -7,8 +7,6 @@ using System.Xml.Linq;
 
 namespace PrescriptionService
 {
-    // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "Service1" in code, svc and config file together.
-    // NOTE: In order to launch WCF Test Client for testing this service, please select Service1.svc or Service1.svc.cs at the Solution Explorer and start debugging.
     public class WCFService : IWCFService
     {
         public static XElement _testData;
@@ -22,22 +20,22 @@ namespace PrescriptionService
 
         public XElement FilterByInterchangeID(int id)
         {
-            return new XElement("root", _testData.Descendants("Interchange").Where(i => (int)i.Element("MessageRoutingAddress").Element("InterchangeRef") == id).FirstOrDefault());
+            return new XElement("root", _interchanges.Descendants("Interchange").Where(i => (int)i.Element("MessageRoutingAddress").Element("InterchangeRef") == id).FirstOrDefault());
         }
 
         public XElement FilterByInterchangeNode(string node)
         {
-            return new XElement("root", _testData.Descendants(node));
+            return new XElement("root", _interchanges.Descendants(node));
         }
 
         public XElement FilterByInterchangeIDAndNode(int id, string node)
         {
-            return new XElement("root", _testData.Descendants("Interchange").Where(i => (int)i.Element("MessageRoutingAddress").Element("InterchangeRef") == id).FirstOrDefault().Descendants(node));
+            return new XElement("root", _interchanges.Descendants("Interchange").Where(i => (int)i.Element("MessageRoutingAddress").Element("InterchangeRef") == id).FirstOrDefault().Descendants(node));
         }
 
         public XElement FilterByInterchangeNodeValue(string node, string value)
         {
-            return new XElement("root", _testData.Descendants("Interchange").Where(n => (string)n.Descendants(node).FirstOrDefault() == value));
+            return new XElement("root", _interchanges.Descendants("Interchange").Where(n => (string)n.Descendants(node).FirstOrDefault() == value));
         }
 
         public XElement GetAllInterchanges()
