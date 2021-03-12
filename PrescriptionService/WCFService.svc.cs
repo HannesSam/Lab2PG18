@@ -25,7 +25,7 @@ namespace PrescriptionService
 
         public XElement FilterByInterchangeNode(string node)
         {
-            return new XElement("root", _interchanges.Descendants(node));
+            return new XElement("root", _interchanges.Descendants(node).Select(n => n.Value).Distinct().Select(n => new XElement(node, n)));
         }
 
         public XElement FilterByInterchangeIDAndNode(int id, string node)
